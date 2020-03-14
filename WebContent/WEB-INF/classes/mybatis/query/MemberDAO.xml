@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.member.dao.MemberMapper">
+	<resultMap type="com.spring.member.vo.MemberVO" id="memberVO">
+		<result property="lmem" column="LMEM" />
+		<result property="lid" column="LID" />
+		<result property="lpw" column="LPW" />
+		<result property="lname" column="LNAME" />
+		<result property="lgender" column="LGENDER" />
+		<result property="lbirth" column="LBIRTH" />
+		<result property="lemail" column="LEMAIL" />
+		<result property="lhp" column="LHP" />
+		<result property="lpostno" column="LPOSTNO" />
+		<result property="ljuso" column="LJUSO" />
+		<result property="ldeleteyn" column="LDELETEYN" />
+		<result property="linsertdate" column="LINSERTDATE" />
+		<result property="lupdatedate" column="LUPDATEDATE" />
+		<result property="limage" column="LIMAGE" />
+	</resultMap>
+	
+	<!-- listMember -->
+	<select id="listMem" parameterType="com.spring.member.vo.MemberVO" resultMap="memberVO">
+		<!-- listMember -->
+		SELECT
+			 LMEM,
+			 LID,
+			 LPW,
+			 LNAME,
+			 LGENDER,
+			 LBIRTH,
+			 LEMAIL,
+			 LHP,
+			 LPOSTNO,
+			 LJUSO,
+			 LDELETEYN,
+			 LINSERTDATE,
+			 LUPDATEDATE,
+			 LIMAGE
+		FROM LSJ_MEMBER
+		WHERE LDELETEYN = 'Y'
+	
+		<if test="lname != null and lname !=''">
+			AND LNAME LIKE '%' || #{lname} || '%'
+		</if>
+	
+		
+		ORDER BY LMEM DESC
+		
+	</select>
+	
+	<!-- insert -->
+	<insert id="insertMem" parameterType="com.spring.member.vo.MemberVO">
+		INSERT INTO LSJ_MEMBER
+			(LMEM,
+			 LID,
+			 LPW,
+			 LNAME,
+			 LGENDER,
+			 LBIRTH,
+			 LEMAIL,
+			 LHP,
+			 LPOSTNO,
+			 LJUSO,
+			 LDELETEYN,
+			 LINSERTDATE,
+			 LUPDATEDATE,
+			 LIMAGE)
+		VALUES
+			(#{lmem,jdbcType=VARCHAR},
+			 #{lid,jdbcType=VARCHAR},
+			 #{lpw,jdbcType=VARCHAR},
+			 #{lname,jdbcType=VARCHAR},
+			 #{lgender,jdbcType=VARCHAR},
+			 #{lbirth,jdbcType=VARCHAR},
+			 #{lemail,jdbcType=VARCHAR},
+			 #{lhp,jdbcType=VARCHAR},
+			 #{lpostno,jdbcType=VARCHAR},
+			 #{ljuso,jdbcType=VARCHAR},
+			 'Y',
+			 SYSDATE,
+			 SYSDATE,
+			 #{limage,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- chaebun -->
+	<select id="chaebunMem" resultMap="memberVO">
+		SELECT NVL(MAX(SUBSTR(LMEM, 2)), 0) + 1 LMEM FROM LSJ_MEMBER
+	</select>
+	
+	<select id="selectMem" parameterType="String" resultMap="memberVO">
+		SELECT
+			 LMEM,
+			 LID,
+			 LPW,
+			 LNAME,
+			 LGENDER,
+			 LBIRTH,
+			 LEMAIL,
+			 LHP,
+			 LPOSTNO,
+			 LJUSO,
+			 LDELETEYN,
+			 LINSERTDATE,
+			 LUPDATEDATE,
+			 LIMAGE
+		FROM LSJ_MEMBER		
+		WHERE LMEM = #{lmem}
+	</select>
+	
+	<update id="updateMem" parameterType="com.spring.member.vo.MemberVO">
+		UPDATE LSJ_MEMBER
+		SET LPW = #{lpw},
+			LNAME = #{lname},
+			LEMAIL = #{lemail},
+			LHP = #{lhp},
+			LPOSTNO = #{lpostno},
+			LJUSO = #{ljuso},
+			LUPDATEDATE = SYSDATE
+		WHERE LMEM = #{lmem}
+		AND LDELETEYN = 'Y'
+	</update>
+	
+	<delete id="deleteMem" parameterType="string">
+		<!-- Mapper-deleteLesson -->
+		DELETE 
+		FROM LSJ_MEMBER
+		WHERE LMEM = #{lmem}
+		AND LDELETEYN = 'Y'
+	</delete>
+	
+	<!-- login -->
+	<select id="loginMem" parameterType="String" resultMap="memberVO">
+		SELECT
+			 LID,
+			 LPW,
+			 LDELETEYN
+		FROM LSJ_MEMBER
+		
+		WHERE LID = #{lid}
+		AND LPW = #{lpw}
+		AND LDELETEYN = 'Y'
+	</select>
+	
+	<!-- idCheck -->
+	<select id="idCheck" parameterType="com.spring.member.vo.MemberVO" resultMap="memberVO">
+		SELECT
+			 LID,
+			 LDELETEYN
+		FROM LSJ_MEMBER
+		WHERE LID = #{lid}
+		AND LDELETEYN = 'Y'
+	</select>
+</mapper>

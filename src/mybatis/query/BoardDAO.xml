@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.board.dao.BoardMapper">
+	<resultMap type="com.spring.board.vo.BoardVO" id="boardVO">
+		<result property="lno" column="LNO" />
+		<result property="lsubject" column="LSUBJECT" />
+		<result property="lname" column="LNAME" />
+		<result property="lpw" column="LPW" />
+		<result property="lmemo" column="LMEMO" />
+		<result property="ldeleteyn" column="LDELETEYN" />
+		<result property="linsertdate" column="LINSERTDATE" />
+		<result property="lupdatedate" column="LUPDATEDATE" />
+		<result property="limage" column="LIMAGE" />
+	</resultMap>
+	
+	<!-- listBoard -->
+	<select id="listBoard" parameterType="com.spring.board.vo.BoardVO" resultMap="boardVO">
+		<!-- listBoard -->
+		SELECT
+			 LNO,
+			 LSUBJECT,
+			 LNAME,
+			 LPW,
+			 LMEMO,
+			 LDELETEYN,
+			 LINSERTDATE,
+			 LUPDATEDATE,
+			 LIMAGE
+		FROM LSJ_HELLOBOARD
+		WHERE LDELETEYN = 'Y'
+	
+		<if test="lname != null and lname !=''">
+			AND LNAME LIKE '%' || #{lname} || '%'
+		</if>
+	
+		
+		ORDER BY LNO DESC
+		
+	</select>
+	
+	<!-- insert -->
+	<insert id="insertBoard" parameterType="com.spring.board.vo.BoardVO">
+		INSERT INTO LSJ_HELLOBOARD
+			(LNO,
+			 LSUBJECT,
+			 LNAME,
+			 LPW,
+			 LMEMO,
+			 LDELETEYN,
+			 LINSERTDATE,
+			 LUPDATEDATE,
+			 LIMAGE)
+		VALUES
+			(#{lno,jdbcType=VARCHAR},
+			 #{lsubject,jdbcType=VARCHAR},
+			 #{lname,jdbcType=VARCHAR},
+			 #{lpw,jdbcType=VARCHAR},
+			 #{lmemo,jdbcType=VARCHAR},
+			 'Y',
+			 SYSDATE,
+			 SYSDATE,
+			 #{limage,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- chaebun -->
+	<select id="chaebunBoard" resultMap="boardVO">
+		SELECT NVL(MAX(SUBSTR(LNO, 2)), 0) + 1 LNO FROM LSJ_HELLOBOARD
+	</select>
+	
+	<select id="selectBoard" parameterType="String" resultMap="boardVO">
+		SELECT
+			 LNO,
+			 LSUBJECT,
+			 LNAME,
+			 LPW,
+			 LMEMO,
+			 LDELETEYN,
+			 LINSERTDATE,
+			 LUPDATEDATE,
+			 LIMAGE
+		FROM LSJ_HELLOBOARD	
+		WHERE LNO = #{lno}
+	</select>
+	
+	<update id="updateBoard" parameterType="com.spring.board.vo.BoardVO">
+		UPDATE LSJ_HELLOBOARD
+		SET LSUBJECT = #{lsubject},
+			LMEMO = #{lmemo},
+			LUPDATEDATE = SYSDATE
+		WHERE LNO = #{lno}
+		AND LDELETEYN = 'Y'
+	</update>
+	
+	<delete id="deleteBoard" parameterType="string">
+		DELETE 
+		FROM LSJ_HELLOBOARD
+		WHERE LNO = #{lno}
+		AND LDELETEYN = 'Y'
+	</delete>
+	
+	
+</mapper>
